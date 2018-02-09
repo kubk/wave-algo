@@ -1,4 +1,4 @@
-# wave-algo [![Build Status](https://travis-ci.org/kubk/wave-algo.svg?branch=master)](https://travis-ci.org/kubk/wave-algo)
+# wave-algo [![Build Status](https://travis-ci.org/kubk/wave-algo.svg?branch=master)](https://travis-ci.org/kubk/wave-algo) [![StyleCI](https://styleci.io/repos/103864085/shield?branch=master)](https://styleci.io/repos/103864085) 
 Lee's algorithm finds the shortest path between 2 points in a 2D matrix. It is also called Wave algorithm.
 
 ## Demo

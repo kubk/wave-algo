@@ -1,0 +1,63 @@
+body {
+  padding: 5px;
+  font-family: Ubuntu, serif;
+}
+
+@keyframes fadein {
+  from {
+    opacity: 0.2;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.maze {
+  .table {
+    border-collapse: separate;
+    border-spacing: 0;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    margin-bottom: 5px;
+
+    .row {
+      border: 1px solid rgba(0, 0, 0, 0.2);
+
+      .cell {
+        text-align: center;
+        border: 1px solid rgba(0, 0, 0, 0.2);
+        display: inline-block;
+        padding: 10px;
+        width: 20px;
+        height: 20px;
+
+        &.wave {
+          transition: background-color 1s linear;
+        }
+
+        &.start {
+          background-color: #0d0;
+          animation: fadein 1.2s;
+        }
+
+        &.finish {
+          background-color: #e40;
+          animation: fadein 1.2s;
+        }
+
+        &.backtrace {
+          background-color: yellow !important;
+          transition: background-color 0.5s linear;
+        }
+
+        &.wall {
+          background-color: #808080;
+        }
+      }
+    }
+  }
+
+  .maze-control {
+    padding: 10px;
+    margin-right: 5px;
+  }
+}

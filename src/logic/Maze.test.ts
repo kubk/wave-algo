@@ -4,8 +4,12 @@ describe('Maze', () => {
   it('can be constructed without start and finish', () => {
     const maze = new Maze([[false, false, false], [false, true, false], [false, false, false]]);
 
-    expect(maze.getFinish()).toBeFalsy();
-    expect(maze.getStart()).toBeFalsy();
+    expect(() => {
+      maze.getFinish();
+    }).toThrow();
+    expect(() => {
+      maze.getStart();
+    }).toThrow();
   });
 
   const start: [number, number] = [0, 0];

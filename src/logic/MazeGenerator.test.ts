@@ -26,7 +26,7 @@ describe('generate', () => {
         if (hasEmptyCell && hasWall) {
           break;
         }
-        if (maze.isCellAvailableForMove([i, j])) {
+        if (maze.isAvailableForMove([i, j])) {
           hasEmptyCell = true;
         }
         if (maze.isWall([i, j])) {

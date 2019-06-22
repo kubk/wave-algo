@@ -1,104 +1,119 @@
-export type Cell = [number, number];
-export type Matrix = Array<Array<boolean | number>>;
+export type Coordinate = [number, number];
+export type Wave = Coordinate[];
+export type Cell = boolean | number;
+export type Matrix = Cell[][];
 
 export class Maze {
-  boolMatrix: Matrix;
-  startCell?: Cell;
-  finishCell?: Cell;
+  private matrix: Matrix;
+  private start?: Coordinate;
+  private finish?: Coordinate;
 
-  constructor(boolMatrix: Matrix, startCell?: Cell, finishCell?: Cell) {
-    this.boolMatrix = boolMatrix;
-    if (startCell) {
-      this.setStart(startCell);
+  constructor(matrix: Matrix, start?: Coordinate, finish?: Coordinate) {
+    this.matrix = matrix;
+    if (start) {
+      this.setStart(start);
     }
-    if (finishCell) {
-      this.setFinish(finishCell);
+    if (finish) {
+      this.setFinish(finish);
     }
   }
 
-  setStart(newStart: Cell): void {
+  setStart(newStart: Coordinate): void {
     if (!this.hasCoordinate(newStart)) {
       throw new Error(`Invalid coordinate`);
     }
     if (this.isWall(newStart) || this.isFinish(newStart)) {
       return;
     }
-    this.startCell = newStart;
+    this.start = newStart;
     this.clearWaves();
   }
 
-  isStart(coordinate: Cell): boolean {
-    return this.startCell !== undefined && this.coordinatesAreTheSame(this.startCell, coordinate);
+  isStart(coordinate: Coordinate): boolean {
+    return this.start !== undefined && this.coordinatesAreTheSame(this.start, coordinate);
   }
 
-  isFinish(coordinate: Cell): boolean {
-    return this.finishCell !== undefined && this.coordinatesAreTheSame(this.finishCell, coordinate);
+  isFinish(coordinate: Coordinate): boolean {
+    return this.finish !== undefined && this.coordinatesAreTheSame(this.finish, coordinate);
   }
 
-  coordinatesAreTheSame(left: Cell, right: Cell): boolean {
+  coordinatesAreTheSame(left: Coordinate, right: Coordinate): boolean {
     return left[0] === right[0] && left[1] === right[1];
   }
 
-  isWall(cell: Cell): boolean {
-    return this.boolMatrix[cell[0]][cell[1]] === true;
+  isWall(coordinate: Coordinate): boolean {
+    return this.matrix[coordinate[0]][coordinate[1]] === true;
   }
 
-  setFinish(newFinish: Cell): void {
+  setFinish(newFinish: Coordinate): void {
     if (!this.hasCoordinate(newFinish)) {
       throw new Error(`Invalid coordinate: ${newFinish.toString()}`);
     }
     if (this.isWall(newFinish) || this.isStart(newFinish)) {
       return;
     }
-    this.finishCell = newFinish;
+    this.finish = newFinish;
     this.clearWaves();
   }
 
-  hasCoordinate(coordinate: Cell): boolean {
+  hasCoordinate(coordinate: Coordinate): boolean {
     return (
-      this.boolMatrix[coordinate[0]] !== undefined &&
-      this.boolMatrix[coordinate[0]][coordinate[1]] !== undefined
+      this.matrix[coordinate[0]] !== undefined &&
+      this.matrix[coordinate[0]][coordinate[1]] !== undefined
     );
   }
 
-  getStart(): Cell {
-    return this.startCell as Cell;
+  getStart(): Coordinate {
+    if (!this.start) {
+      throw new Error('Start is not set');
+    }
+    return this.start;
   }
 
-  getFinish(): Cell {
-    return this.finishCell as Cell;
+  getFinish(): Coordinate {
+    if (!this.finish) {
+      throw new Error('Finish is not set');
+    }
+    return this.finish;
   }
 
   toArray(): Matrix {
-    return this.boolMatrix;
+    return this.matrix;
   }
 
-  isCellAvailableForMove = (cell: Cell): boolean => {
-    return this.hasCoordinate(cell) && !this.isWall(cell);
-  };
+  isAvailableForMove(coordinate: Coordinate): boolean {
+    return this.hasCoordinate(coordinate) && !this.isWall(coordinate);
+  }
 
-  setWaveStep(wave: Cell[], step: number): void {
-    wave.forEach((cell: Cell) => {
-      this.boolMatrix[cell[0]][cell[1]] = step;
+  setWaveStep(wave: Wave, step: number): void {
+    wave.forEach(coordinate => {
+      this.matrix[coordinate[0]][coordinate[1]] = step;
     });
   }
 
   clearWaves(): void {
-    const toInitialState = (cell: number | boolean) => {
-      return cell && !Number.isInteger(cell as number);
+    const toInitialState = (cell: Cell) => {
+      return typeof cell === 'boolean' ? cell : !Number.isInteger(cell);
     };
-    this.boolMatrix = this.boolMatrix.map(row => row.map(toInitialState));
+    this.matrix = this.matrix.map(row => row.map(toInitialState));
   }
 
-  isWaveStep(cellValue: boolean | number): boolean {
-    return Number.isInteger(cellValue as number);
+  isWaveStep(cell: Cell): cell is number {
+    if (typeof cell === 'boolean') {
+      return false;
+    }
+    return Number.isInteger(cell);
+  }
+
+  isBacktrace(backtrace: Coordinate[], cell: Coordinate): boolean {
+    return !!backtrace.find(backtraceCell => this.coordinatesAreTheSame(backtraceCell, cell));
   }
 
   getWidth(): number {
-    return this.boolMatrix[0].length;
+    return this.matrix[0].length;
   }
 
   getHeight(): number {
-    return this.boolMatrix.length;
+    return this.matrix.length;
   }
 }

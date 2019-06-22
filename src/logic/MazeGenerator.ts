@@ -1,7 +1,7 @@
-import { Maze, Cell, Matrix } from './Maze';
+import { Maze, Coordinate, Matrix } from './Maze';
 
 export class MazeGenerator {
-  generate(rows: number = 12, columns: number = 28): Maze {
+  generate(rows = 12, columns = 28): Maze {
     if (rows < 2 || columns < 2) {
       throw new Error('Invalid maze params');
     }
@@ -20,7 +20,7 @@ export class MazeGenerator {
     return [...Array(rows)].map(() => [...Array(columns)].map(wallOrEmpty));
   }
 
-  private findRandomEmptyCell(maze: Maze, columnFrom: number, columnTo: number): Cell {
+  private findRandomEmptyCell(maze: Maze, columnFrom: number, columnTo: number): Coordinate {
     const randomRow = Math.floor(Math.random() * maze.getHeight());
     const randomColumn = Math.floor(Math.random() * (columnTo - columnFrom + 1)) + columnFrom;
 

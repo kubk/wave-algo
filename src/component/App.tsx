@@ -1,7 +1,6 @@
 import React from 'react';
 import { Maze as MazeView } from './Maze';
-import { Cell, Maze as MazeModel } from '../logic/Maze';
-import { Waves } from '../logic/WaveAlgorithm';
+import { Coordinate, Maze as MazeModel, Wave } from '../logic/Maze';
 import { WaveColorGenerator } from '../logic/WaveColorGenerator';
 import { WaveAlgorithm } from '../logic/WaveAlgorithm';
 import { MazeGenerator } from '../logic/MazeGenerator';
@@ -13,11 +12,11 @@ interface Props {
 
 interface State {
   maze: MazeModel;
-  backtrace: Cell[];
+  backtrace: Coordinate[];
 }
 
 export class App extends React.Component<Props, State> {
-  timeoutIds: NodeJS.Timeout[] = [];
+  timeoutIds: number[] = [];
 
   constructor(props: Props) {
     super(props);
@@ -28,7 +27,7 @@ export class App extends React.Component<Props, State> {
     };
   }
 
-  handleClick = (event: Event, coordinate: Cell) => {
+  handleClick = (event: Event, coordinate: Coordinate) => {
     event.preventDefault();
     this.interruptAnimation();
 
@@ -47,16 +46,16 @@ export class App extends React.Component<Props, State> {
     return event.nativeEvent.which === 3;
   }
 
-  interruptAnimation = () => {
+  interruptAnimation() {
     this.timeoutIds.forEach(clearTimeout);
-  };
+  }
 
   /**
    * Wraps setTimeout for saving timeoutId
    */
-  setTimeout = (callback: any, timeout: any) => {
+  setTimeout(callback: TimerHandler, timeout: number) {
     this.timeoutIds.push(setTimeout(callback, timeout));
-  };
+  }
 
   runWaveAlgo = async () => {
     this.clearWaves();
@@ -77,7 +76,7 @@ export class App extends React.Component<Props, State> {
     }
   };
 
-  animateWavePropagation(maze: MazeModel, waves: Waves): Promise<void> {
+  animateWavePropagation(maze: MazeModel, waves: Wave[]): Promise<void> {
     return new Promise(resolve => {
       for (let i = 0; i < waves.length - 1; i++) {
         this.setTimeout(() => {

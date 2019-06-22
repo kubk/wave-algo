@@ -1,20 +1,16 @@
 import React, { Component } from 'react';
-import { Maze as MazeModel, Cell } from '../logic/Maze';
+import { Maze as MazeModel, Coordinate } from '../logic/Maze';
 import { WaveColorGenerator } from '../logic/WaveColorGenerator';
 import classNames from 'classnames';
 
 interface Props {
   maze: MazeModel;
-  backtrace: Cell[];
-  onCellClick: Function;
+  backtrace: Coordinate[];
+  onCellClick: (event: any, coordinate: Coordinate) => void;
   waveColorGenerator: WaveColorGenerator;
 }
 
 export class Maze extends Component<Props> {
-  isBacktrace(maze: MazeModel, backtrace: Cell[], cell: Cell): boolean {
-    return !!backtrace.find(backtraceCell => maze.coordinatesAreTheSame(backtraceCell, cell));
-  }
-
   render() {
     const { maze, backtrace, onCellClick, waveColorGenerator } = this.props;
     return (
@@ -24,13 +20,11 @@ export class Maze extends Component<Props> {
             <tr key={rowIndex} className="row">
               {row.map((cell, columnIndex) => (
                 <td
-                  style={
-                    maze.isWaveStep(cell)
-                      ? {
-                          backgroundColor: waveColorGenerator.generate(cell as number)
-                        }
-                      : {}
-                  }
+                  style={{
+                    backgroundColor: maze.isWaveStep(cell)
+                      ? waveColorGenerator.generate(cell)
+                      : undefined
+                  }}
                   key={columnIndex}
                   onClick={e => onCellClick(e, [rowIndex, columnIndex])}
                   onContextMenu={e => onCellClick(e, [rowIndex, columnIndex])}
@@ -39,7 +33,7 @@ export class Maze extends Component<Props> {
                     wall: maze.isWall([rowIndex, columnIndex]),
                     start: maze.isStart([rowIndex, columnIndex]),
                     finish: maze.isFinish([rowIndex, columnIndex]),
-                    backtrace: this.isBacktrace(maze, backtrace, [rowIndex, columnIndex]),
+                    backtrace: maze.isBacktrace(backtrace, [rowIndex, columnIndex]),
                     wave: maze.isWaveStep(cell)
                   })}
                 >
